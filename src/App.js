@@ -1,26 +1,47 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useCallback } from "react";
+import Title from "./components/Title";
+import Card from "./components/Card";
+import List from "./components/List";
 
-function App() {
+const App = () => {
+  const [gifUrl, setGifUrl] = useState("");
+  const [favorites, setFavorites] = useState([]);
+
+  const getRandomGifUrl = async () => {
+    fetch(
+      "https://api.giphy.com/v1/gifs/random?api_key=gH7glaXpjdIJUfGdtE2GO5FSQzi09bbY&tag=Cat&rating=G"
+    )
+      .then(data => data.json())
+      .then(response => {
+        setGifUrl(response.data.fixed_height_downsampled_url);
+      })
+  };
+
+  const addFavoriteGif = useCallback(() => {
+    if (!gifUrl) return;
+
+    // @todo - Print an alert message :)
+
+    if (!favorites.includes(gifUrl)) {
+      setFavorites([...favorites, gifUrl]);
+    }
+  }, [favorites, gifUrl]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="main-wrapper">
+      <Title>
+        pick your <u>favorite</u> gif cat
+      </Title>
+
+      <Card
+        gifUrl={gifUrl}
+        getRandomGifUrl={getRandomGifUrl}
+        addFavoriteGif={addFavoriteGif}
+      />
+
+      <List favorites={favorites} />
     </div>
   );
-}
+};
 
 export default App;
